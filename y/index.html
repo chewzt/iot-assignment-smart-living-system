@@ -1,89 +1,290 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Living Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --warning: #F1C40F;
+        }
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.11.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.11.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.11.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Sensor Display */
+        .sensor-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .sensor-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Controls */
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        /* Toggle Switch CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider.danger-slider { background-color: var(--danger); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* Security Specifics */
+        .alarm-status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            background-color: var(--success);
+            color: white;
+            margin-top: 15px;
+        }
+        .alarm-status.triggered {
+            background-color: var(--danger);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+</head>
+<body>
+
+    <h1>Smart Living Dashboard</h1>
+
+    <div class="dashboard-grid">
+        
+        <div class="card">
+            <h2>Environment Overview</h2>
+            
+            <div class="sensor-row">
+                <span>Room Temperature</span>
+                <span class="sensor-value" id="val-temp">24°C</span>
+            </div>
+            <div class="sensor-row">
+                <span>Humidity</span>
+                <span class="sensor-value" id="val-humid">45%</span>
+            </div>
+            <div class="sensor-row">
+                <span>Light Intensity</span>
+                <span class="sensor-value" id="val-light">80%</span>
+            </div>
+            <div class="sensor-row">
+                <span>Smoke Level</span>
+                <span class="sensor-value" id="val-smoke">Safe</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Center Console</h2>
+            
+            <div class="control-row">
+                <span>Main Lights</span>
+                <label class="switch">
+                    <input type="checkbox" id="ctrl-light" onchange="toggleDevice('light', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="control-row">
+                <span>Smart Curtains</span>
+                <label class="switch">
+                    <input type="checkbox" id="ctrl-curtain" onchange="toggleDevice('curtain', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="control-row">
+                <span>Exhaust Fan</span>
+                <label class="switch">
+                    <input type="checkbox" id="ctrl-fan" onchange="toggleDevice('fan', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="control-row">
+                <span>NFC Smart Door Lock</span>
+                <label class="switch">
+                    <input type="checkbox" id="ctrl-door" checked onchange="toggleDevice('door', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Security System</h2>
+            
+            <div class="control-row">
+                <span><strong>House Mode: Armed</strong></span>
+                <label class="switch">
+                    <input type="checkbox" id="ctrl-security" onchange="toggleSecurityMode(this.checked)">
+                    <span class="slider danger-slider"></span>
+                </label>
+            </div>
+            
+            <div class="sensor-row">
+                <span>Ultrasonic Motion Sensor</span>
+                <span class="sensor-value" id="val-motion" style="color: var(--text-muted);">Inactive</span>
+            </div>
+
+            <div id="alarm-banner" class="alarm-status">
+                SYSTEM SECURE
+            </div>
+        </div>
+
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        // --- 1. Center Console Logic ---
+        function toggleDevice(device, isTurnedOn) {
+            console.log(`Sending command to Firebase: Turn ${device} ${isTurnedOn ? 'ON' : 'OFF'}`);
+            // TODO: Add Firebase Realtime Database / Firestore update logic here
+            // Example: firebase.database().ref('devices/' + device).set(isTurnedOn);
         }
-      });
+
+        // --- 2. Security System Logic ---
+        let isArmed = false;
+
+        function toggleSecurityMode(armed) {
+            isArmed = armed;
+            console.log(`Security mode is now: ${isArmed ? 'ARMED' : 'DISARMED'}`);
+            
+            const alarmBanner = document.getElementById('alarm-banner');
+            
+            if (!isArmed) {
+                // Reset alarm visually when disarmed
+                alarmBanner.className = 'alarm-status';
+                alarmBanner.innerText = 'SYSTEM SECURE';
+                document.getElementById('val-motion').innerText = 'Inactive';
+            }
+            
+            // TODO: Update security status in Firebase
+        }
+
+        // --- 3. Incoming IoT Sensor Data (Mock Function) ---
+        // You will replace this function with Firebase listener callbacks (e.g., onValue)
+        function updateSensorsFromFirebase(data) {
+            // Update UI
+            document.getElementById('val-temp').innerText = data.temperature + '°C';
+            document.getElementById('val-humid').innerText = data.humidity + '%';
+            document.getElementById('val-light').innerText = data.lightIntensity + '%';
+            
+            const smokeElem = document.getElementById('val-smoke');
+            smokeElem.innerText = data.smokeDetected ? 'DETECTED!' : 'Safe';
+            smokeElem.style.color = data.smokeDetected ? 'var(--danger)' : 'var(--primary)';
+
+            // Auto-trigger logic (Ideally, this logic should be in your Node.js backend, 
+            // but you can test it on the frontend first).
+            if (data.smokeDetected) {
+                document.getElementById('ctrl-fan').checked = true;
+                // trigger fan on...
+            }
+
+            // Security Trigger Logic: "如果有人进去家里面了会trigger alarm"
+            if (data.motionDetected) {
+                document.getElementById('val-motion').innerText = 'Motion Detected!';
+                if (isArmed) {
+                    const alarmBanner = document.getElementById('alarm-banner');
+                    alarmBanner.className = 'alarm-status triggered';
+                    alarmBanner.innerText = 'ALARM TRIGGERED! BREACH DETECTED!';
+                }
+            } else if (!data.motionDetected && !isArmed) {
+                 document.getElementById('val-motion').innerText = 'Inactive';
+            }
+        }
+
+        // Mock interval to simulate hardware sending data to the dashboard
+        // Remove this setInterval when you actually connect Firebase
+        setInterval(() => {
+            // Simulating reading from Firebase...
+            const mockData = {
+                temperature: (24 + Math.random() * 2).toFixed(1),
+                humidity: Math.floor(40 + Math.random() * 10),
+                lightIntensity: Math.floor(70 + Math.random() * 20),
+                smokeDetected: false, 
+                motionDetected: Math.random() > 0.8 // Randomly simulate motion 20% of the time
+            };
+            updateSensorsFromFirebase(mockData);
+        }, 3000);
+
     </script>
-  </body>
+</body>
 </html>
