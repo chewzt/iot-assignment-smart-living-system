@@ -1,0 +1,134 @@
+{
+  "homes": {
+    "home_001": {
+      "homeMode": {
+        "state": "disarmed",
+        "updatedAt": 1776508800000
+      },
+      "status": {
+        "smokeDetected": false,
+        "mq2Value": 0,
+        "temperature": 0,
+        "humidity": 0,
+        "lightIntensity": 0,
+        "buzzerState": "off",
+        "ledState": "off",
+        "fanState": "off",
+        "curtainState": "closed",
+        "lastUpdated": 1776508800000
+      },
+      "controls": {
+        "homeMode": {
+          "targetState": "disarmed",
+          "source": "dashboard",
+          "updatedAt": 1776508800000
+        },
+        "buzzer": {
+          "targetState": "off",
+          "source": "dashboard",
+          "updatedAt": 1776508800000
+        },
+        "ledLight": {
+          "targetState": "off",
+          "source": "dashboard",
+          "updatedAt": 1776508800000
+        },
+        "fanRelay": {
+          "targetState": "off",
+          "source": "dashboard",
+          "updatedAt": 1776508800000
+        },
+        "curtainServo": {
+          "targetState": "closed",
+          "targetPosition": 0,
+          "source": "dashboard",
+          "updatedAt": 1776508800000
+        }
+      },
+      "devices": {
+        "buzzer": {
+          "mode": "manual",
+          "state": "off",
+          "updatedAt": 1776508800000
+        },
+        "ledLight": {
+          "mode": "manual",
+          "state": "off",
+          "updatedAt": 1776508800000
+        },
+        "fanRelay": {
+          "mode": "manual",
+          "state": "off",
+          "updatedAt": 1776508800000
+        },
+        "curtainServo": {
+          "mode": "manual",
+          "state": "closed",
+          "position": 0,
+          "updatedAt": 1776508800000
+        }
+      },
+      "automation": {
+        "smoke": {
+          "enabled": true,
+          "mq2Threshold": 2000,
+          "actions": {
+            "turnOnBuzzer": true,
+            "turnOnLed": true,
+            "turnOnFan": true
+          }
+        },
+        "temperature": {
+          "enabled": true,
+          "highThreshold": 30,
+          "lowThreshold": 24,
+          "actions": {
+            "openCurtain": true,
+            "turnOnFan": true
+          }
+        },
+        "lightIntensity": {
+          "enabled": true,
+          "brightThreshold": 800,
+          "darkThreshold": 2000,
+          "actions": {
+            "closeCurtain": true,
+            "openCurtain": true,
+            "turnOnLight": true,
+            "turnOffLight": true
+          }
+        }
+      },
+      "sensors": {
+        "mq2": {
+          "value": 0,
+          "smokeDetected": false,
+          "updatedAt": 1776508800000
+        },
+        "dht22": {
+          "temperature": 0,
+          "humidity": 0,
+          "updatedAt": 1776508800000
+        },
+        "ldr": {
+          "value": 0,
+          "updatedAt": 1776508800000
+        }
+      },
+      "history": {
+        "temperature": {},
+        "humidity": {},
+        "lightIntensity": {},
+        "mq2": {}
+      },
+      "events": {
+        "sample_event_001": {
+          "type": "system_start",
+          "message": "Smart home database template initialized",
+          "triggeredBy": "system",
+          "timestamp": 1776508800000
+        }
+      }
+    }
+  }
+}

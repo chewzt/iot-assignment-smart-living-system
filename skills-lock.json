@@ -34,7 +34,7 @@
     "firebase-basics": {
       "source": "firebase/agent-skills",
       "sourceType": "github",
-      "computedHash": "13b74b8f7a751a359a11cff2d20968b94c93cb394f88bf3ffbce477376414fac"
+      "computedHash": "98d865baea6ebd70723a17c5ca6bb7a9a504fbffddfb10525b08c9d45f7d9a31"
     },
     "firebase-data-connect": {
       "source": "firebase/agent-skills",
@@ -59,7 +59,7 @@
     "firestore-security-rules-auditor": {
       "source": "firebase/agent-skills",
       "sourceType": "github",
-      "computedHash": "173b38a87198e9ac1a2ffc62a4a9525f444a98ead46bdb255395fd81499d33b3"
+      "computedHash": "f3e47896a49b76db787f47ee97f8cb2e23c51e4b18a73cd2ded32d6cc8c02869"
     }
   }
 }

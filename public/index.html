@@ -1,290 +1,741 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Living Dashboard</title>
-    <style>
-        :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #777777;
-            --primary: #4A90E2;
-            --success: #2ECC71;
-            --danger: #E74C3C;
-            --warning: #F1C40F;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Home Remote Control Panel</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel2: #1f2937;
+      --line: #334155;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --radius: 18px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, .22)
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
+    * {
+      box-sizing: border-box
+    }
 
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 30px;
-        }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #07101e 0%, #111827 100%);
+      color: var(--text)
+    }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .app {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px
+    }
 
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
+    .topbar {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 22px
+    }
 
-        .card h2 {
-            font-size: 1.2rem;
-            margin-top: 0;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
+    .title h1 {
+      margin: 0;
+      font-size: 31px
+    }
 
-        /* Sensor Display */
-        .sensor-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: var(--bg-color);
-            border-radius: 8px;
-        }
-        
-        .sensor-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
+    .title p {
+      margin: 6px 0 0;
+      color: var(--muted)
+    }
 
-        /* Controls */
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center
+    }
 
-        /* Toggle Switch CSS */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px; width: 16px;
-            left: 4px; bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider.danger-slider { background-color: var(--danger); }
-        input:checked + .slider:before { transform: translateX(26px); }
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .04);
+      font-size: 14px
+    }
 
-        /* Security Specifics */
-        .alarm-status {
-            text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            background-color: var(--success);
-            color: white;
-            margin-top: 15px;
-        }
-        .alarm-status.triggered {
-            background-color: var(--danger);
-            animation: blink 1s infinite;
-        }
+    .badge.safe {
+      border-color: rgba(34, 197, 94, .4);
+      color: #bbf7d0
+    }
 
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-    </style>
+    .badge.alert {
+      border-color: rgba(239, 68, 68, .45);
+      color: #fecaca
+    }
+
+    .badge.offline {
+      border-color: rgba(245, 158, 11, .45);
+      color: #fde68a
+    }
+
+    .badge.info {
+      border-color: rgba(59, 130, 246, .45);
+      color: #bfdbfe
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr))
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .card {
+      background: rgba(17, 24, 39, .94);
+      border: 1px solid rgba(148, 163, 184, .15);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px
+    }
+
+    .card h3 {
+      margin: 0 0 14px;
+      font-size: 18px
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center
+    }
+
+    .metric-value {
+      font-size: 31px;
+      font-weight: 700
+    }
+
+    .metric-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(148, 163, 184, .14);
+      color: #cbd5e1
+    }
+
+    .chip.on {
+      background: rgba(34, 197, 94, .15);
+      color: #86efac
+    }
+
+    .chip.alert {
+      background: rgba(239, 68, 68, .16);
+      color: #fca5a5
+    }
+
+    .chip.warn {
+      background: rgba(245, 158, 11, .18);
+      color: #fde68a
+    }
+
+    .chip.info {
+      background: rgba(59, 130, 246, .16);
+      color: #93c5fd
+    }
+
+    .chip.pending {
+      background: rgba(245, 158, 11, .18);
+      color: #fde68a
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease
+    }
+
+    .btn:hover {
+      transform: translateY(-1px)
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .btn.success {
+      background: var(--ok);
+      color: white
+    }
+
+    .btn.warning {
+      background: var(--warn);
+      color: white
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: white
+    }
+
+    .btn.primary {
+      background: var(--info);
+      color: white
+    }
+
+    .btn.dark {
+      background: #374151;
+      color: white
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px
+    }
+
+    .control-box {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(148, 163, 184, .12);
+      border-radius: 16px;
+      padding: 14px
+    }
+
+    .control-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px
+    }
+
+    .control-title {
+      font-weight: 800;
+      font-size: 15px
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .mini {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px
+    }
+
+    .mini .small {
+      background: #0c1628;
+      border: 1px solid rgba(148, 163, 184, .14);
+      border-radius: 12px;
+      padding: 9px
+    }
+
+    .small-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    .small-value {
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px
+    }
+
+    .field label {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0b1220;
+      color: white
+    }
+
+    .events {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 440px;
+      overflow: auto
+    }
+
+    .event {
+      border: 1px solid rgba(148, 163, 184, .14);
+      background: rgba(255, 255, 255, .03);
+      border-left: 4px solid var(--info);
+      border-radius: 14px;
+      padding: 12px
+    }
+
+    .event.smoke_detected,
+    .event.smoke_alert {
+      border-left-color: var(--danger)
+    }
+
+    .event.temperature_high,
+    .event.temp_high {
+      border-left-color: var(--warn)
+    }
+
+    .event.curtain_opened,
+    .event.curtain_closed,
+    .event.light_env_changed {
+      border-left-color: var(--info)
+    }
+
+    .event-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px
+    }
+
+    .chart-wrap {
+      height: 290px
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    @media (max-width:1150px) {
+
+      .grid-4,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+    }
+
+    @media (max-width:760px) {
+
+      .grid-4,
+      .grid-3,
+      .grid-2,
+      .controls-grid,
+      .mini {
+        grid-template-columns: 1fr
+      }
+
+      .metric-value {
+        font-size: 26px
+      }
+    }
+  </style>
 </head>
+
 <body>
-
-    <h1>Smart Living Dashboard</h1>
-
-    <div class="dashboard-grid">
-        
-        <div class="card">
-            <h2>Environment Overview</h2>
-            
-            <div class="sensor-row">
-                <span>Room Temperature</span>
-                <span class="sensor-value" id="val-temp">24°C</span>
-            </div>
-            <div class="sensor-row">
-                <span>Humidity</span>
-                <span class="sensor-value" id="val-humid">45%</span>
-            </div>
-            <div class="sensor-row">
-                <span>Light Intensity</span>
-                <span class="sensor-value" id="val-light">80%</span>
-            </div>
-            <div class="sensor-row">
-                <span>Smoke Level</span>
-                <span class="sensor-value" id="val-smoke">Safe</span>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Center Console</h2>
-            
-            <div class="control-row">
-                <span>Main Lights</span>
-                <label class="switch">
-                    <input type="checkbox" id="ctrl-light" onchange="toggleDevice('light', this.checked)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="control-row">
-                <span>Smart Curtains</span>
-                <label class="switch">
-                    <input type="checkbox" id="ctrl-curtain" onchange="toggleDevice('curtain', this.checked)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="control-row">
-                <span>Exhaust Fan</span>
-                <label class="switch">
-                    <input type="checkbox" id="ctrl-fan" onchange="toggleDevice('fan', this.checked)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="control-row">
-                <span>NFC Smart Door Lock</span>
-                <label class="switch">
-                    <input type="checkbox" id="ctrl-door" checked onchange="toggleDevice('door', this.checked)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Security System</h2>
-            
-            <div class="control-row">
-                <span><strong>House Mode: Armed</strong></span>
-                <label class="switch">
-                    <input type="checkbox" id="ctrl-security" onchange="toggleSecurityMode(this.checked)">
-                    <span class="slider danger-slider"></span>
-                </label>
-            </div>
-            
-            <div class="sensor-row">
-                <span>Ultrasonic Motion Sensor</span>
-                <span class="sensor-value" id="val-motion" style="color: var(--text-muted);">Inactive</span>
-            </div>
-
-            <div id="alarm-banner" class="alarm-status">
-                SYSTEM SECURE
-            </div>
-        </div>
-
+  <div class="app">
+    <div class="topbar">
+      <div class="title">
+        <h1>Smart Home Remote Control Panel</h1>
+        <p>Remote control for buzzer, LED, fan, curtain, plus live home state, triggers, charts, and recent events.</p>
+      </div>
+      <div class="top-actions">
+        <div id="connectionBadge" class="badge offline">Connecting...</div>
+        <div id="alarmBadge" class="badge safe">No Smoke Alert</div>
+        <button id="armBtn" class="btn primary">Arm Home</button>
+        <button id="disarmBtn" class="btn warning">Disarm Home</button>
+      </div>
     </div>
 
-    <script>
-        // --- 1. Center Console Logic ---
-        function toggleDevice(device, isTurnedOn) {
-            console.log(`Sending command to Firebase: Turn ${device} ${isTurnedOn ? 'ON' : 'OFF'}`);
-            // TODO: Add Firebase Realtime Database / Firestore update logic here
-            // Example: firebase.database().ref('devices/' + device).set(isTurnedOn);
-        }
+    <div class="grid grid-4" style="margin-bottom:18px">
+      <div class="card">
+        <h3>Smoke Status</h3>
+        <div class="metric">
+          <div>
+            <div id="smokeValue" class="metric-value">Normal</div>
+            <div class="metric-sub">MQ2: <span id="mq2Value">--</span></div>
+          </div>
+          <div id="smokeChip" class="chip">SAFE</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Temperature</h3>
+        <div class="metric">
+          <div>
+            <div id="tempValue" class="metric-value">--°C</div>
+            <div class="metric-sub">Humidity: <span id="humidityValue">--</span>%</div>
+          </div>
+          <div id="tempChip" class="chip">NORMAL</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Light Intensity</h3>
+        <div class="metric">
+          <div>
+            <div id="ldrValue" class="metric-value">--</div>
+            <div class="metric-sub">LDR brightness value</div>
+          </div>
+          <div id="ldrChip" class="chip">NORMAL</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Home Mode</h3>
+        <div class="metric">
+          <div>
+            <div id="homeModeValue" class="metric-value">--</div>
+            <div class="metric-sub">Security mode</div>
+          </div>
+          <div id="homeModeChip" class="chip warn">DISARMED</div>
+        </div>
+      </div>
+    </div>
 
-        // --- 2. Security System Logic ---
-        let isArmed = false;
+    <div class="grid grid-3" style="margin-bottom:18px">
+      <div class="card">
+        <h3>Active Triggers</h3>
+        <div class="row">
+          <div id="triggerSmoke" class="badge safe">Smoke: inactive</div>
+          <div id="triggerTemp" class="badge safe">Temp: normal</div>
+          <div id="triggerLight" class="badge safe">Light: normal</div>
+        </div>
+        <div class="footer-note">These are calculated from live status plus the saved automation thresholds.</div>
+      </div>
+      <div class="card">
+        <h3>System Summary</h3>
+        <div class="stack muted">
+          <div>Last Update: <strong id="lastUpdatedText">--</strong></div>
+          <div>Buzzer / LED / Fan / Curtain: <strong id="summaryStates">--</strong></div>
+          <div>Requested Sync: <strong id="syncSummary">--</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Automation Thresholds</h3>
+        <div class="stack muted">
+          <div>MQ2 Trigger: <strong id="thresholdMq2Text">--</strong></div>
+          <div>Temp High: <strong id="thresholdTempText">--</strong></div>
+          <div>Light Bright / Dark: <strong id="thresholdLightText">--</strong></div>
+        </div>
+      </div>
+    </div>
 
-        function toggleSecurityMode(armed) {
-            isArmed = armed;
-            console.log(`Security mode is now: ${isArmed ? 'ARMED' : 'DISARMED'}`);
-            
-            const alarmBanner = document.getElementById('alarm-banner');
-            
-            if (!isArmed) {
-                // Reset alarm visually when disarmed
-                alarmBanner.className = 'alarm-status';
-                alarmBanner.innerText = 'SYSTEM SECURE';
-                document.getElementById('val-motion').innerText = 'Inactive';
-            }
-            
-            // TODO: Update security status in Firebase
-        }
+    <div class="grid grid-2" style="margin-bottom:18px">
+      <div class="card">
+        <h3>Remote Device Controls</h3>
+        <div class="controls-grid">
+          <div class="control-box">
+            <div class="control-head">
+              <div class="control-title">Buzzer</div>
+              <div id="buzzerActualChip" class="chip">OFF</div>
+            </div>
+            <div class="mini">
+              <div class="small">
+                <div class="small-label">Actual</div>
+                <div id="buzzerActualText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Requested</div>
+                <div id="buzzerTargetText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Sync</div>
+                <div id="buzzerSyncText" class="small-value">SYNCED</div>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:10px"><button class="btn success"
+                onclick="commandDevice('buzzer','on')">Manual On</button><button class="btn dark"
+                onclick="commandDevice('buzzer','off')">Manual Off</button><button class="btn warning"
+                onclick="setDeviceMode('buzzer','auto')">Auto</button></div>
+            <div class="muted">Mode: <span id="buzzerModeText">--</span></div>
+          </div>
+          <div class="control-box">
+            <div class="control-head">
+              <div class="control-title">LED Light</div>
+              <div id="ledActualChip" class="chip">OFF</div>
+            </div>
+            <div class="mini">
+              <div class="small">
+                <div class="small-label">Actual</div>
+                <div id="ledActualText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Requested</div>
+                <div id="ledTargetText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Sync</div>
+                <div id="ledSyncText" class="small-value">SYNCED</div>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:10px"><button class="btn success"
+                onclick="commandDevice('ledLight','on')">Manual On</button><button class="btn dark"
+                onclick="commandDevice('ledLight','off')">Manual Off</button><button class="btn warning"
+                onclick="setDeviceMode('ledLight','auto')">Auto</button></div>
+            <div class="muted">Mode: <span id="ledModeText">--</span></div>
+          </div>
+          <div class="control-box">
+            <div class="control-head">
+              <div class="control-title">Fan Relay</div>
+              <div id="fanActualChip" class="chip">OFF</div>
+            </div>
+            <div class="mini">
+              <div class="small">
+                <div class="small-label">Actual</div>
+                <div id="fanActualText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Requested</div>
+                <div id="fanTargetText" class="small-value">OFF</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Sync</div>
+                <div id="fanSyncText" class="small-value">SYNCED</div>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:10px"><button class="btn success"
+                onclick="commandDevice('fanRelay','on')">Manual On</button><button class="btn dark"
+                onclick="commandDevice('fanRelay','off')">Manual Off</button><button class="btn warning"
+                onclick="setDeviceMode('fanRelay','auto')">Auto</button></div>
+            <div class="muted">Mode: <span id="fanModeText">--</span></div>
+          </div>
+          <div class="control-box">
+            <div class="control-head">
+              <div class="control-title">Curtain Servo</div>
+              <div id="curtainActualChip" class="chip">CLOSED</div>
+            </div>
+            <div class="mini">
+              <div class="small">
+                <div class="small-label">Actual</div>
+                <div id="curtainActualText" class="small-value">CLOSED</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Requested</div>
+                <div id="curtainTargetText" class="small-value">CLOSED</div>
+              </div>
+              <div class="small">
+                <div class="small-label">Sync</div>
+                <div id="curtainSyncText" class="small-value">SYNCED</div>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:10px"><button class="btn success"
+                onclick="setCurtainManual('open',100)">Manual Open</button><button class="btn dark"
+                onclick="setCurtainManual('closed',0)">Manual Close</button><button class="btn warning"
+                onclick="setDeviceMode('curtainServo','auto')">Auto</button></div>
+            <div class="muted">Mode: <span id="curtainModeText">--</span> | Position: <span
+                id="curtainPosText">--</span>%</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Automation Settings</h3>
+        <div class="field"><label for="mq2Threshold">MQ2 Smoke Trigger</label><input id="mq2Threshold" type="number" />
+        </div>
+        <div class="field"><label for="tempThreshold">Temperature High Threshold (°C)</label><input id="tempThreshold"
+            type="number" step="0.1" /></div>
+        <div class="field"><label for="ldrBrightThreshold">LDR Bright Threshold</label><input id="ldrBrightThreshold"
+            type="number" /></div>
+        <div class="field"><label for="ldrDarkThreshold">LDR Dark Threshold</label><input id="ldrDarkThreshold"
+            type="number" /></div>
+        <div class="row"><button id="saveSettingsBtn" class="btn primary">Save Settings</button><button
+            id="reloadSettingsBtn" class="btn dark">Reload</button></div>
+        <div class="footer-note">The page uses your Firebase RTDB. Manual buttons switch the device to manual mode and
+          send the target command in one click.</div>
+      </div>
+    </div>
 
-        // --- 3. Incoming IoT Sensor Data (Mock Function) ---
-        // You will replace this function with Firebase listener callbacks (e.g., onValue)
-        function updateSensorsFromFirebase(data) {
-            // Update UI
-            document.getElementById('val-temp').innerText = data.temperature + '°C';
-            document.getElementById('val-humid').innerText = data.humidity + '%';
-            document.getElementById('val-light').innerText = data.lightIntensity + '%';
-            
-            const smokeElem = document.getElementById('val-smoke');
-            smokeElem.innerText = data.smokeDetected ? 'DETECTED!' : 'Safe';
-            smokeElem.style.color = data.smokeDetected ? 'var(--danger)' : 'var(--primary)';
+    <div class="grid grid-2" style="margin-bottom:18px">
+      <div class="card">
+        <h3>Temperature History</h3>
+        <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Environment History</h3>
+        <div class="chart-wrap"><canvas id="envChart"></canvas></div>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Recent Events</h3>
+        <div id="eventsList" class="events"></div>
+      </div>
+      <div class="card">
+        <h3>How this panel works</h3>
+        <div class="stack muted">
+          <div>1. Click a manual command → dashboard writes target state to <code>/controls</code> and sets mode to
+            <code>manual</code>.</div>
+          <div>2. ESP32 reads the request, applies the actuator, then writes the actual result to <code>/status</code>
+            and <code>/devices</code>.</div>
+          <div>3. The requested/actual chips here let you see whether the device is still pending or already synced.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            // Auto-trigger logic (Ideally, this logic should be in your Node.js backend, 
-            // but you can test it on the frontend first).
-            if (data.smokeDetected) {
-                document.getElementById('ctrl-fan').checked = true;
-                // trigger fan on...
-            }
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getDatabase, ref, onValue, update, set, get, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-            // Security Trigger Logic: "如果有人进去家里面了会trigger alarm"
-            if (data.motionDetected) {
-                document.getElementById('val-motion').innerText = 'Motion Detected!';
-                if (isArmed) {
-                    const alarmBanner = document.getElementById('alarm-banner');
-                    alarmBanner.className = 'alarm-status triggered';
-                    alarmBanner.innerText = 'ALARM TRIGGERED! BREACH DETECTED!';
-                }
-            } else if (!data.motionDetected && !isArmed) {
-                 document.getElementById('val-motion').innerText = 'Inactive';
-            }
-        }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBk_lXYkt6Sr6GHQUJ48ws0hb_VF0w7mOs",
+      authDomain: "iot-smart-living-system.firebaseapp.com",
+      databaseURL: "https://iot-smart-living-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "iot-smart-living-system",
+      storageBucket: "iot-smart-living-system.firebasestorage.app",
+      messagingSenderId: "147534963768",
+      appId: "1:147534963768:web:27fd371b2bf9845fe7f2cd",
+      measurementId: "G-MKRXQQ7D0X"
+    };
 
-        // Mock interval to simulate hardware sending data to the dashboard
-        // Remove this setInterval when you actually connect Firebase
-        setInterval(() => {
-            // Simulating reading from Firebase...
-            const mockData = {
-                temperature: (24 + Math.random() * 2).toFixed(1),
-                humidity: Math.floor(40 + Math.random() * 10),
-                lightIntensity: Math.floor(70 + Math.random() * 20),
-                smokeDetected: false, 
-                motionDetected: Math.random() > 0.8 // Randomly simulate motion 20% of the time
-            };
-            updateSensorsFromFirebase(mockData);
-        }, 3000);
+    const HOME_ID = 'home_001';
+    const BASE = `homes/${HOME_ID}`;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const $ = (id) => document.getElementById(id);
 
-    </script>
+    const state = { homeMode: {}, status: {}, devices: {}, controls: {}, automation: {} };
+
+    function tsText(v) { if (v === undefined || v === null) return '--'; const d = new Date(Number(v)); return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleString(); }
+    function chip(node, text, kind = '') { node.textContent = text; node.className = `chip ${kind}`.trim(); }
+    function badge(node, text, kind = '') { node.textContent = text; node.className = `badge ${kind}`.trim(); }
+    function actualStatusKey(deviceKey) { return { buzzer: 'buzzerState', ledLight: 'ledState', fanRelay: 'fanState', curtainServo: 'curtainState' }[deviceKey]; }
+    function controlKey(deviceKey) { return { buzzer: 'buzzer', ledLight: 'ledLight', fanRelay: 'fanRelay', curtainServo: 'curtainServo' }[deviceKey]; }
+
+    async function setHomeMode(mode) { const now = Date.now(); await update(ref(db, `${BASE}/homeMode`), { state: mode, updatedAt: now }); await update(ref(db, `${BASE}/controls/homeMode`), { targetState: mode, source: 'dashboard', updatedAt: now }); }
+    async function setDeviceMode(deviceKey, mode) { const now = Date.now(); await update(ref(db, `${BASE}/devices/${deviceKey}`), { mode, updatedAt: now }); }
+    async function commandDevice(deviceKey, targetState) { const now = Date.now(); await update(ref(db, `${BASE}/devices/${deviceKey}`), { mode: 'manual', updatedAt: now }); await update(ref(db, `${BASE}/controls/${controlKey(deviceKey)}`), { targetState, source: 'dashboard', updatedAt: now }); }
+    async function setCurtainManual(targetState, targetPosition) { const now = Date.now(); await update(ref(db, `${BASE}/devices/curtainServo`), { mode: 'manual', updatedAt: now }); await update(ref(db, `${BASE}/controls/curtainServo`), { targetState, targetPosition, source: 'dashboard', updatedAt: now }); }
+
+    async function saveAutomationSettings() {
+      const payload = {
+        smoke: { enabled: true, mq2Threshold: Number($('mq2Threshold').value || 2000), actions: { turnOnBuzzer: true, turnOnLed: true, turnOnFan: true } },
+        temperature: { enabled: true, highThreshold: Number($('tempThreshold').value || 30), lowThreshold: 24, actions: { openCurtain: true, turnOnFan: true } },
+        lightIntensity: { enabled: true, brightThreshold: Number($('ldrBrightThreshold').value || 800), darkThreshold: Number($('ldrDarkThreshold').value || 2000), actions: { closeCurtain: true, openCurtain: true, turnOnLight: true, turnOffLight: true } }
+      };
+      await set(ref(db, `${BASE}/automation`), payload);
+      alert('Automation settings saved.');
+    }
+
+    async function reloadSettings() {
+      const snap = await get(ref(db, `${BASE}/automation`));
+      const data = snap.val() || {};
+      state.automation = data;
+      $('mq2Threshold').value = data?.smoke?.mq2Threshold ?? 2000;
+      $('tempThreshold').value = data?.temperature?.highThreshold ?? 30;
+      $('ldrBrightThreshold').value = data?.lightIntensity?.brightThreshold ?? 800;
+      $('ldrDarkThreshold').value = data?.lightIntensity?.darkThreshold ?? 2000;
+      renderThresholdSummary(); renderTriggerSummary();
+    }
+
+    window.commandDevice = commandDevice;
+    window.setCurtainManual = setCurtainManual;
+    window.setDeviceMode = setDeviceMode;
+    $('armBtn').addEventListener('click', () => setHomeMode('armed').catch(showErr));
+    $('disarmBtn').addEventListener('click', () => setHomeMode('disarmed').catch(showErr));
+    $('saveSettingsBtn').addEventListener('click', () => saveAutomationSettings().catch(showErr));
+    $('reloadSettingsBtn').addEventListener('click', () => reloadSettings().catch(showErr));
+    function showErr(err) { console.error(err); alert(err?.message || String(err)); }
+
+    onValue(ref(db, '.info/connected'), (snap) => { const connected = snap.val() === true; badge($('connectionBadge'), connected ? 'Firebase Connected' : 'Firebase Offline', connected ? 'safe' : 'offline'); });
+    onValue(ref(db, `${BASE}/homeMode`), (snap) => { state.homeMode = snap.val() || {}; const mode = state.homeMode.state || 'disarmed'; $('homeModeValue').textContent = mode.toUpperCase(); chip($('homeModeChip'), mode.toUpperCase(), mode === 'armed' ? 'info' : 'warn'); });
+    onValue(ref(db, `${BASE}/status`), (snap) => { state.status = snap.val() || {}; renderStatus(); renderControls(); renderTriggerSummary(); renderSummary(); });
+    onValue(ref(db, `${BASE}/devices`), (snap) => { state.devices = snap.val() || {}; renderControls(); });
+    onValue(ref(db, `${BASE}/controls`), (snap) => { state.controls = snap.val() || {}; renderControls(); renderSummary(); });
+    onValue(ref(db, `${BASE}/automation`), (snap) => { state.automation = snap.val() || {}; $('mq2Threshold').value = state.automation?.smoke?.mq2Threshold ?? 2000; $('tempThreshold').value = state.automation?.temperature?.highThreshold ?? 30; $('ldrBrightThreshold').value = state.automation?.lightIntensity?.brightThreshold ?? 800; $('ldrDarkThreshold').value = state.automation?.lightIntensity?.darkThreshold ?? 2000; renderThresholdSummary(); renderTriggerSummary(); });
+
+    function renderStatus() {
+      const s = state.status; const smoke = !!s.smokeDetected; const temp = Number(s.temperature ?? 0); const hum = Number(s.humidity ?? 0); const ldr = Number(s.lightIntensity ?? 0);
+      $('smokeValue').textContent = smoke ? 'Detected' : 'Normal'; $('mq2Value').textContent = s.mq2Value ?? '--'; chip($('smokeChip'), smoke ? 'ALERT' : 'SAFE', smoke ? 'alert' : '');
+      $('tempValue').textContent = `${temp.toFixed(1)}°C`; $('humidityValue').textContent = hum.toFixed(1); $('ldrValue').textContent = ldr; $('lastUpdatedText').textContent = tsText(s.lastUpdated);
+      badge($('alarmBadge'), smoke ? 'Smoke Alert Active' : 'No Smoke Alert', smoke ? 'alert' : 'safe');
+      const tempTh = Number(state.automation?.temperature?.highThreshold ?? 30); chip($('tempChip'), temp >= tempTh ? 'HIGH' : 'NORMAL', temp >= tempTh ? 'warn' : '');
+      const darkTh = Number(state.automation?.lightIntensity?.darkThreshold ?? 2000); const brightTh = Number(state.automation?.lightIntensity?.brightThreshold ?? 800);
+      if (ldr >= darkTh) chip($('ldrChip'), 'DARK', 'info'); else if (ldr <= brightTh) chip($('ldrChip'), 'BRIGHT', 'info'); else chip($('ldrChip'), 'NORMAL', '');
+    }
+
+    function renderThresholdSummary() { $('thresholdMq2Text').textContent = state.automation?.smoke?.mq2Threshold ?? '--'; $('thresholdTempText').textContent = state.automation?.temperature?.highThreshold ?? '--'; $('thresholdLightText').textContent = `${state.automation?.lightIntensity?.brightThreshold ?? '--'} / ${state.automation?.lightIntensity?.darkThreshold ?? '--'}`; }
+    function renderTriggerSummary() { const s = state.status; const smoke = !!s.smokeDetected; const temp = Number(s.temperature ?? 0); const ldr = Number(s.lightIntensity ?? 0); const tempTh = Number(state.automation?.temperature?.highThreshold ?? 30); const darkTh = Number(state.automation?.lightIntensity?.darkThreshold ?? 2000); const brightTh = Number(state.automation?.lightIntensity?.brightThreshold ?? 800); badge($('triggerSmoke'), smoke ? 'Smoke: active' : 'Smoke: inactive', smoke ? 'alert' : 'safe'); badge($('triggerTemp'), temp >= tempTh ? 'Temp: high' : 'Temp: normal', temp >= tempTh ? 'alert' : 'safe'); let lightText = 'Light: normal', kind = 'safe'; if (ldr >= darkTh) { lightText = 'Light: dark'; kind = 'info'; } else if (ldr <= brightTh) { lightText = 'Light: bright'; kind = 'info'; } badge($('triggerLight'), lightText, kind); }
+    function syncText(deviceKey) { const c = state.controls?.[controlKey(deviceKey)] || {}; const requested = deviceKey === 'curtainServo' ? (c.targetState || 'closed') : (c.targetState || 'off'); const actual = deviceKey === 'curtainServo' ? (state.status?.[actualStatusKey(deviceKey)] || 'closed') : (state.status?.[actualStatusKey(deviceKey)] || 'off'); return requested === actual ? 'SYNCED' : 'PENDING'; }
+    function renderDevice(deviceKey, domPrefix, actualDefault = 'off') { const dev = state.devices?.[deviceKey] || {}; const c = state.controls?.[controlKey(deviceKey)] || {}; const actual = (state.status?.[actualStatusKey(deviceKey)] || actualDefault).toString(); const requested = (c.targetState || actualDefault).toString(); const kind = actual === 'on' || actual === 'open' ? 'on' : ''; $(`${domPrefix}ActualText`).textContent = actual.toUpperCase(); $(`${domPrefix}TargetText`).textContent = requested.toUpperCase(); $(`${domPrefix}SyncText`).textContent = requested === actual ? 'SYNCED' : 'PENDING'; $(`${domPrefix}ModeText`).textContent = dev.mode || '--'; chip($(`${domPrefix}ActualChip`), actual.toUpperCase(), kind); }
+    function renderControls() { renderDevice('buzzer', 'buzzer', 'off'); renderDevice('ledLight', 'led', 'off'); renderDevice('fanRelay', 'fan', 'off'); renderDevice('curtainServo', 'curtain', 'closed'); const curtainDev = state.devices?.curtainServo || {}; const c = state.controls?.curtainServo || {}; const actualCurtain = (state.status?.curtainState || 'closed').toUpperCase(); const reqCurtain = (c.targetState || 'closed').toUpperCase(); $('curtainActualText').textContent = actualCurtain; $('curtainTargetText').textContent = reqCurtain; $('curtainSyncText').textContent = reqCurtain === actualCurtain ? 'SYNCED' : 'PENDING'; $('curtainModeText').textContent = curtainDev.mode || '--'; $('curtainPosText').textContent = curtainDev.position ?? '--'; chip($('curtainActualChip'), actualCurtain, actualCurtain === 'OPEN' ? 'on' : ''); }
+    function renderSummary() { const s = state.status || {}; $('summaryStates').textContent = `${(s.buzzerState || 'off').toUpperCase()} / ${(s.ledState || 'off').toUpperCase()} / ${(s.fanState || 'off').toUpperCase()} / ${(s.curtainState || 'closed').toUpperCase()}`; const items = [syncText('buzzer'), syncText('ledLight'), syncText('fanRelay'), syncText('curtainServo')]; $('syncSummary').textContent = items.includes('PENDING') ? 'PENDING COMMAND' : 'ALL SYNCED'; }
+
+    let tempChart, envChart;
+    function createCharts() {
+      tempChart = new Chart(document.getElementById('tempChart'), { type: 'line', data: { labels: [], datasets: [{ label: 'Temperature (°C)', data: [], borderWidth: 2, tension: .25 }, { label: 'Humidity (%)', data: [], borderWidth: 2, tension: .25 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e5e7eb' } } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,.08)' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,.08)' } } } } });
+      envChart = new Chart(document.getElementById('envChart'), { type: 'line', data: { labels: [], datasets: [{ label: 'LDR', data: [], borderWidth: 2, tension: .25 }, { label: 'MQ2', data: [], borderWidth: 2, tension: .25 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e5e7eb' } } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,.08)' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,.08)' } } } } });
+    }
+    createCharts();
+
+    onValue(ref(db, `${BASE}/history`), (snap) => {
+      const h = snap.val() || {};
+      const tempEntries = Object.entries(h.temperature || {}).sort((a, b) => Number(a[0]) - Number(b[0])).slice(-16);
+      const humEntries = Object.entries(h.humidity || {}).sort((a, b) => Number(a[0]) - Number(b[0])).slice(-16);
+      const ldrEntries = Object.entries(h.lightIntensity || {}).sort((a, b) => Number(a[0]) - Number(b[0])).slice(-16);
+      const mq2Entries = Object.entries(h.mq2 || {}).sort((a, b) => Number(a[0]) - Number(b[0])).slice(-16);
+      tempChart.data.labels = tempEntries.map(([ts]) => new Date(Number(ts)).toLocaleTimeString()); tempChart.data.datasets[0].data = tempEntries.map(([, v]) => v); tempChart.data.datasets[1].data = humEntries.map(([, v]) => v); tempChart.update();
+      envChart.data.labels = ldrEntries.map(([ts]) => new Date(Number(ts)).toLocaleTimeString()); envChart.data.datasets[0].data = ldrEntries.map(([, v]) => v); envChart.data.datasets[1].data = mq2Entries.map(([, v]) => v); envChart.update();
+    });
+
+    onValue(query(ref(db, `${BASE}/events`), limitToLast(20)), (snap) => {
+      const data = snap.val() || {}; const items = Object.entries(data).map(([id, item]) => ({ id, ...item })).sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0)); const container = $('eventsList'); container.innerHTML = ''; if (!items.length) { container.innerHTML = '<div class="muted">No events recorded yet.</div>'; return; }
+      items.forEach(item => { const div = document.createElement('div'); div.className = `event ${item.type || ''}`; div.innerHTML = `<div class="event-top"><strong>${item.type || 'event'}</strong><span class="muted">${tsText(item.timestamp || Date.now())}</span></div><div>${item.message || 'No message provided.'}</div><div class="muted" style="margin-top:6px">Triggered by: ${item.triggeredBy || 'system'} ${item.value !== undefined ? ` | Value: ${item.value}` : ''}</div>`; container.appendChild(div); });
+    });
+
+    reloadSettings().catch(showErr);
+  </script>
 </body>
+
 </html>

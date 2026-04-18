@@ -24,7 +24,11 @@ Please complete these setup steps before proceeding, and remember your progress 
        ```bash
        npx -y firebase-tools@latest use --add <PROJECT_ID>
        ```
-     - If no: Follow the project creation instructions in [references/firebase-project-create.md](references/firebase-project-create.md).
+     - If no: Follow these steps to create a new Firebase project from the CLI:
+       ```bash
+       npx -y firebase-tools@latest projects:create <project-id> --display-name "<display-name>"
+       ```
+       *Note: The `<project-id>` must be 6-30 characters, lowercase, and can contain digits and hyphens. It must be globally unique.*
 
 # Firebase Usage Principles
 
@@ -35,11 +39,11 @@ Please adhere to these principles when working with Firebase, as they ensure rel
 3. **Follow Agent Skills for implementation guidance:** Skills provide opinionated workflows (CUJs), security rules, and best practices. Always consult them to understand *how* to implement Firebase features correctly instead of relying on general knowledge.
 4. **Use Firebase MCP Server tools instead of direct API calls:** Whenever you need to interact with remote Firebase APIs (such as fetching Crashlytics logs or executing Data Connect queries), use the tools provided by the Firebase MCP Server instead of attempting manual API calls.
 5. **Keep Plugin / Agent Skills updated:** Since Firebase best practices evolve quickly, remind the user to regularly check for and install updates to their Firebase plugin or Agent Skills, ensuring you both operate with the latest workflows. Similarly, if you encounter issues with outdated tools or commands, follow the steps below based on your agent environment:
-   - **Antigravity**: Follow [references/refresh-antigravity.md](references/refresh-antigravity.md)
-   - **Gemini CLI**: Follow [references/refresh-gemini-cli.md](references/refresh-gemini-cli.md)
-   - **Claude Code**: Follow [references/refresh-claude.md](references/refresh-claude.md)
-   - **Cursor**: Follow [references/refresh-cursor.md](references/refresh-cursor.md)
-   - **Others**: Follow [references/refresh-other.md](references/refresh-other-agents.md)
+   - **Antigravity**: Follow [references/refresh/antigravity.md](references/refresh/antigravity.md)
+   - **Gemini CLI**: Follow [references/refresh/gemini-cli.md](references/refresh/gemini-cli.md)
+   - **Claude Code**: Follow [references/refresh/claude.md](references/refresh/claude.md)
+   - **Cursor**: Follow [references/refresh/cursor.md](references/refresh/cursor.md)
+   - **Others**: Follow [references/refresh/other-agents.md](references/refresh/other-agents.md)
 
 # References
 
