@@ -613,7 +613,8 @@
         <h3>How this panel works</h3>
         <div class="stack muted">
           <div>1. Click a manual command → dashboard writes target state to <code>/controls</code> and sets mode to
-            <code>manual</code>.</div>
+            <code>manual</code>.
+          </div>
           <div>2. ESP32 reads the request, applies the actuator, then writes the actual result to <code>/status</code>
             and <code>/devices</code>.</div>
           <div>3. The requested/actual chips here let you see whether the device is still pending or already synced.
@@ -706,10 +707,63 @@
 
     function renderThresholdSummary() { $('thresholdMq2Text').textContent = state.automation?.smoke?.mq2Threshold ?? '--'; $('thresholdTempText').textContent = state.automation?.temperature?.highThreshold ?? '--'; $('thresholdLightText').textContent = `${state.automation?.lightIntensity?.brightThreshold ?? '--'} / ${state.automation?.lightIntensity?.darkThreshold ?? '--'}`; }
     function renderTriggerSummary() { const s = state.status; const smoke = !!s.smokeDetected; const temp = Number(s.temperature ?? 0); const ldr = Number(s.lightIntensity ?? 0); const tempTh = Number(state.automation?.temperature?.highThreshold ?? 30); const darkTh = Number(state.automation?.lightIntensity?.darkThreshold ?? 2000); const brightTh = Number(state.automation?.lightIntensity?.brightThreshold ?? 800); badge($('triggerSmoke'), smoke ? 'Smoke: active' : 'Smoke: inactive', smoke ? 'alert' : 'safe'); badge($('triggerTemp'), temp >= tempTh ? 'Temp: high' : 'Temp: normal', temp >= tempTh ? 'alert' : 'safe'); let lightText = 'Light: normal', kind = 'safe'; if (ldr >= darkTh) { lightText = 'Light: dark'; kind = 'info'; } else if (ldr <= brightTh) { lightText = 'Light: bright'; kind = 'info'; } badge($('triggerLight'), lightText, kind); }
-    function syncText(deviceKey) { const c = state.controls?.[controlKey(deviceKey)] || {}; const requested = deviceKey === 'curtainServo' ? (c.targetState || 'closed') : (c.targetState || 'off'); const actual = deviceKey === 'curtainServo' ? (state.status?.[actualStatusKey(deviceKey)] || 'closed') : (state.status?.[actualStatusKey(deviceKey)] || 'off'); return requested === actual ? 'SYNCED' : 'PENDING'; }
-    function renderDevice(deviceKey, domPrefix, actualDefault = 'off') { const dev = state.devices?.[deviceKey] || {}; const c = state.controls?.[controlKey(deviceKey)] || {}; const actual = (state.status?.[actualStatusKey(deviceKey)] || actualDefault).toString(); const requested = (c.targetState || actualDefault).toString(); const kind = actual === 'on' || actual === 'open' ? 'on' : ''; $(`${domPrefix}ActualText`).textContent = actual.toUpperCase(); $(`${domPrefix}TargetText`).textContent = requested.toUpperCase(); $(`${domPrefix}SyncText`).textContent = requested === actual ? 'SYNCED' : 'PENDING'; $(`${domPrefix}ModeText`).textContent = dev.mode || '--'; chip($(`${domPrefix}ActualChip`), actual.toUpperCase(), kind); }
-    function renderControls() { renderDevice('buzzer', 'buzzer', 'off'); renderDevice('ledLight', 'led', 'off'); renderDevice('fanRelay', 'fan', 'off'); renderDevice('curtainServo', 'curtain', 'closed'); const curtainDev = state.devices?.curtainServo || {}; const c = state.controls?.curtainServo || {}; const actualCurtain = (state.status?.curtainState || 'closed').toUpperCase(); const reqCurtain = (c.targetState || 'closed').toUpperCase(); $('curtainActualText').textContent = actualCurtain; $('curtainTargetText').textContent = reqCurtain; $('curtainSyncText').textContent = reqCurtain === actualCurtain ? 'SYNCED' : 'PENDING'; $('curtainModeText').textContent = curtainDev.mode || '--'; $('curtainPosText').textContent = curtainDev.position ?? '--'; chip($('curtainActualChip'), actualCurtain, actualCurtain === 'OPEN' ? 'on' : ''); }
-    function renderSummary() { const s = state.status || {}; $('summaryStates').textContent = `${(s.buzzerState || 'off').toUpperCase()} / ${(s.ledState || 'off').toUpperCase()} / ${(s.fanState || 'off').toUpperCase()} / ${(s.curtainState || 'closed').toUpperCase()}`; const items = [syncText('buzzer'), syncText('ledLight'), syncText('fanRelay'), syncText('curtainServo')]; $('syncSummary').textContent = items.includes('PENDING') ? 'PENDING COMMAND' : 'ALL SYNCED'; }
+    function syncText(deviceKey) {
+      const dev = state.devices?.[deviceKey] || {};
+      if (dev.mode === 'auto') return 'SYNCED';
+
+      const c = state.controls?.[controlKey(deviceKey)] || {};
+      const requested = deviceKey === 'curtainServo' ? (c.targetState || 'closed') : (c.targetState || 'off');
+      const actual = deviceKey === 'curtainServo' ? (state.status?.[actualStatusKey(deviceKey)] || 'closed') : (state.status?.[actualStatusKey(deviceKey)] || 'off');
+      return requested === actual ? 'SYNCED' : 'PENDING';
+    }
+    function renderDevice(deviceKey, domPrefix, actualDefault = 'off') {
+      const dev = state.devices?.[deviceKey] || {};
+      const c = state.controls?.[controlKey(deviceKey)] || {};
+      const actual = (state.status?.[actualStatusKey(deviceKey)] || actualDefault).toString().toUpperCase();
+      const requested = (c.targetState || actualDefault).toString().toUpperCase();
+      const mode = (dev.mode || 'manual').toUpperCase();
+      const kind = (actual === 'ON' || actual === 'OPEN') ? 'on' : '';
+
+      $(`${domPrefix}ActualText`).textContent = actual;
+
+      if (mode === 'AUTO') {
+          $(`${domPrefix}TargetText`).textContent = "AUTO"; 
+          $(`${domPrefix}SyncText`).textContent = "---";
+          chip($(`${domPrefix}ActualChip`), `AUTO: ${actual}`, kind);
+      } else {
+          $(`${domPrefix}TargetText`).textContent = requested;
+          $(`${domPrefix}SyncText`).textContent = requested === actual ? 'SYNCED' : 'PENDING';
+          chip($(`${domPrefix}ActualChip`), `MANUAL: ${actual}`, kind);
+      }
+
+      $(`${domPrefix}ModeText`).textContent = dev.mode || '--';
+    }
+    function renderControls() {
+      renderDevice('buzzer', 'buzzer', 'off');
+      renderDevice('ledLight', 'led', 'off');
+      renderDevice('fanRelay', 'fan', 'off');
+      
+      const curtainDev = state.devices?.curtainServo || {};
+      const c = state.controls?.curtainServo || {};
+      const actualCurtain = (state.status?.curtainState || 'closed').toUpperCase();
+      const reqCurtain = (c.targetState || 'closed').toUpperCase();
+      const mode = (curtainDev.mode || 'manual').toUpperCase();
+
+      $('curtainActualText').textContent = actualCurtain;
+
+      if (mode === 'AUTO') {
+          $('curtainTargetText').textContent = "AUTO";
+          $('curtainSyncText').textContent = "---";
+          chip($('curtainActualChip'), `AUTO: ${actualCurtain}`, actualCurtain === 'OPEN' ? 'on' : '');
+      } else {
+          $('curtainTargetText').textContent = reqCurtain;
+          $('curtainSyncText').textContent = reqCurtain === actualCurtain ? 'SYNCED' : 'PENDING';
+          chip($('curtainActualChip'), `MANUAL: ${actualCurtain}`, actualCurtain === 'OPEN' ? 'on' : '');
+      }
+
+      $('curtainModeText').textContent = curtainDev.mode || '--';
+      $('curtainPosText').textContent = curtainDev.position ?? '--';
+    }function renderSummary() { const s = state.status || {}; $('summaryStates').textContent = `${(s.buzzerState || 'off').toUpperCase()} / ${(s.ledState || 'off').toUpperCase()} / ${(s.fanState || 'off').toUpperCase()} / ${(s.curtainState || 'closed').toUpperCase()}`; const items = [syncText('buzzer'), syncText('ledLight'), syncText('fanRelay'), syncText('curtainServo')]; $('syncSummary').textContent = items.includes('PENDING') ? 'PENDING COMMAND' : 'ALL SYNCED'; }
 
     let tempChart, envChart;
     function createCharts() {
