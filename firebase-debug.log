@@ -1,0 +1,47 @@
+[debug] [2026-04-12T17:17:36.668Z] ----------------------------------------------------------------------
+[debug] [2026-04-12T17:17:36.672Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Lengzaii\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2026-04-12T17:17:36.672Z] CLI Version:   15.14.0
+[debug] [2026-04-12T17:17:36.673Z] Platform:      win32
+[debug] [2026-04-12T17:17:36.673Z] Node Version:  v24.14.1
+[debug] [2026-04-12T17:17:36.673Z] Time:          Mon Apr 13 2026 01:17:36 GMT+0800 (Malaysia Time)
+[debug] [2026-04-12T17:17:36.673Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-12T17:17:39.165Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-12T17:17:39.166Z] > authorizing via signed-in user (zhengthong1234@gmail.com)
+[debug] [2026-04-12T17:17:39.166Z] [iam] checking project iot-smart-living-system for permissions ["firebase.projects.get"]
+[debug] [2026-04-12T17:17:39.167Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:39.168Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:39.169Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system:testIamPermissions [none]
+[debug] [2026-04-12T17:17:39.169Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system:testIamPermissions  x-goog-user-project=iot-smart-living-system
+[debug] [2026-04-12T17:17:39.169Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-12T17:17:40.277Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system:testIamPermissions 200
+[debug] [2026-04-12T17:17:40.277Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-04-12T17:17:40.279Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:40.279Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:40.279Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system [none]
+[debug] [2026-04-12T17:17:40.541Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system 200
+[debug] [2026-04-12T17:17:40.541Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/iot-smart-living-system {"projectNumber":"147534963768","projectId":"iot-smart-living-system","lifecycleState":"ACTIVE","name":"IoT Smart Living System","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-08T04:18:36.301Z"}
+[info] 
+[info] === Serving from 'F:\Users\acer\Downloads\IoT Assignment\iot-assignment-smart-living-system'...
+[info] 
+[debug] [2026-04-12T17:17:40.546Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:40.546Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:40.546Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/iot-smart-living-system/sites 
+[debug] [2026-04-12T17:17:41.580Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/iot-smart-living-system/sites 200
+[debug] [2026-04-12T17:17:41.580Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/iot-smart-living-system/sites {"sites":[{"name":"projects/iot-smart-living-system/sites/iot-smart-living-system","defaultUrl":"https://iot-smart-living-system.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2026-04-12T17:17:41.581Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:41.581Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:41.581Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system/webApps/-/config [none]
+[debug] [2026-04-12T17:17:42.495Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system/webApps/-/config 200
+[debug] [2026-04-12T17:17:42.495Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system/webApps/-/config {"projectId":"iot-smart-living-system","appId":"1:147534963768:web:27fd371b2bf9845fe7f2cd","databaseURL":"https://iot-smart-living-system-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"iot-smart-living-system.firebasestorage.app","apiKey":"AIzaSyBk_lXYkt6Sr6GHQUJ48ws0hb_VF0w7mOs","authDomain":"iot-smart-living-system.firebaseapp.com","messagingSenderId":"147534963768","measurementId":"G-MKRXQQ7D0X","projectNumber":"147534963768","version":"2"}
+[debug] [2026-04-12T17:17:42.503Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:42.503Z] Checked if tokens are valid: true, expires at: 1776017667201
+[debug] [2026-04-12T17:17:42.504Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system [none]
+[debug] [2026-04-12T17:17:43.039Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system 200
+[debug] [2026-04-12T17:17:43.039Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/iot-smart-living-system {"projectId":"iot-smart-living-system","projectNumber":"147534963768","displayName":"IoT Smart Living System","name":"projects/iot-smart-living-system","resources":{"hostingSite":"iot-smart-living-system","realtimeDatabaseInstance":"iot-smart-living-system-default-rtdb"},"state":"ACTIVE","etag":"1_6f87d2df-1ce2-4034-be1b-592f62b43027"}
+[debug] [2026-04-12T17:17:43.040Z] Specified "public" directory "public" does not exist; Deploy to Hosting site "iot-smart-living-system" may fail or be empty.
+[info] i  hosting[iot-smart-living-system]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] +  hosting[iot-smart-living-system]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [12/Apr/2026:17:17:46 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [12/Apr/2026:17:17:46 +0000] \"GET / HTTP/1.1\" 404 139 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [12/Apr/2026:17:17:53 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [12/Apr/2026:17:17:53 +0000] \"GET / HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\""}}
+[info] i  hosting: ::1 - - [12/Apr/2026:17:17:53 +0000] "GET /favicon.ico HTTP/1.1" 200 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [12/Apr/2026:17:17:53 +0000] \"GET /favicon.ico HTTP/1.1\" 200 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\""}}
